@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 
 
-import Authorization_form from "./components/Authorization_form";
+import AuthorizationForm from "./components/AuthorizationForm";
 
 class App extends Component{
   render() {
     return(
-        <Authorization_form/>
+        <AuthorizationForm/>
     )
   }
 }
