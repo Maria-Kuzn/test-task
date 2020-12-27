@@ -1,3 +1,5 @@
+import ApiError from "./ApiErrors";
+
 class ApiClient {
 
 
@@ -8,14 +10,13 @@ class ApiClient {
     // Return auth token in format 'Token <secret>'
     auth = (uname, pass) => {
 
-        // let path = '/api-token-auth/';
+        let path = '/api-token-auth/';
         let user = {
             username: uname,
             password: pass
         };
-        // console.log(user);
 
-        return fetch("http://emphasoft-test-assignment.herokuapp.com/api-token-auth/", {
+        return fetch(this.baseUrl + path, {
             method: "POST",
             headers: {
                 Accept: "application/json",
@@ -24,18 +25,22 @@ class ApiClient {
             body: JSON.stringify(user)
         })
             .then(response => {
+                console.log('raw resp')
+                console.log(response)
                 if (!response.ok) {
-                    if (response.status == 401)
-                        return 'Неверный логин или пароль'
-                    else return 'По'
+                    return {error: response.status === 400 ? ApiError.INVALID_CREDIT : ApiError.UNKNOWN_ERROR}
                 }
-                return response;
-            })
-            .then(response => response.json())
-            .then(response => {
-                return response['token'];
-            })
-            // todo handle exception
+
+                return response.json().then(jsonResponse => {
+                    if ('token' in jsonResponse) {
+                        return {token: jsonResponse['token']}
+                    }
+                    console.log(jsonResponse)
+                    console.error('There is not token in result')
+                    return {error: ApiError.UNKNOWN_ERROR};
+
+                });
+            });
 
     }
 
@@ -78,7 +83,21 @@ class ApiManager {
         this.apiClient = apiClient;
     }
 
-    auth = (uname, pass) => this.apiClient.auth(uname, pass); // todo session
+    auth = (uname, pass) => {
+        return this.apiClient.auth(uname, pass)
+            .then(response => {
+                console.log(response)
+                if ('token' in response) {
+                    localStorage.setItem('token', response['token']);
+                    console.log('token set');
+                    return undefined;
+                }
+
+                // comes error
+                console.log('error ', + response.error)
+                return response.error;
+            });
+    }
     users = (token) => this.apiClient.getUsers(token);
 
     // users = (sorting, filters) => {
