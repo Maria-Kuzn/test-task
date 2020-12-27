@@ -1,33 +1,33 @@
 class ApiClient {
 
 
-    constructor(apiHost, port=80, schema='http') {
+    constructor(apiHost, port = 80, schema = 'http') {
         this.baseUrl = schema + "://" + apiHost + ":" + port
     }
 
-    // // Return auth token in format 'Token <secret>'
-    // auth = (uname, pass) => {
-    //
-    //     let path = '/api-token-auth/';
-    //
-    //
-    //     return fetch(
-    //         this.baseUrl + path,
-    //         {
-    //             body: {
-    //                 username: uname,
-    //                 password: pass
-    //             },
-    //             method: "POST",
-    //             headers: {
-    //                 Accept: "application/json",
-    //                 "Content-Type": "application/json"
-    //             }
-    //         }
-    //     ).then(res => res.json()) // todo handle errors
-    //         .then(res => res.token)
-    //
-    // }
+    // Return auth token in format 'Token <secret>'
+    auth = (uname, pass) => {
+
+
+        let path = '/api-token-auth/';
+        let user = {
+            username: uname,
+            password: pass
+        };
+        console.log(user);
+
+        return fetch("http://emphasoft-test-assignment.herokuapp.com/api-token-auth/", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        }).then(res => res.json()).then(console.log)
+
+
+
+    }
     //
     // // Return raw list of users
     // users = (authToken) => {
@@ -53,8 +53,8 @@ class ApiManager {
         this.apiClient = apiClient;
     }
 
-    // auth = (uname, pass) => this.apiClient.auth(uname, pass); // todo session
-    //
+    auth = (uname, pass) => this.apiClient.auth(uname, pass); // todo session
+
     // users = (sorting, filters) => {
     //     // if (auth not in session) {
     //     //     error;
