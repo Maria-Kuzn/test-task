@@ -53,7 +53,25 @@ class ApiClient {
                 "Authorization": "Token " + token
                 // "Authorization": "Token 781bd9f1de084f4daa7ba2aa8a71a2eab855354e"
             }
-        }).then(res => res.json())
+        }).then(response => {
+            console.log(response.status)
+            const result = {
+                users: undefined,
+                error: undefined
+            }
+
+            if (!response.ok) {
+                result.error = response.status === 401 ? ApiError.NEED_AUTH : ApiError.UNKNOWN_ERROR;
+                return result
+            }
+
+
+            return response.json().then(users => {
+                result.users = users;
+                return result;
+            });
+        })
+        // .then(response => response.json())
     }
 
 }
@@ -75,13 +93,12 @@ class ApiManager {
                 }
 
                 // comes error
-                console.log('error ', + response.error)
+                console.log('error ', +response.error)
                 return response.error;
             });
     }
-    users = (token) => {
-        return this.apiClient.getUsers(token)
-            .then(res => res.sort((a, b) => a.id-b.id))
+    users = () => {
+        return this.apiClient.getUsers(localStorage.getItem('token'))
     }
 
     // users = (sorting, filters) => {

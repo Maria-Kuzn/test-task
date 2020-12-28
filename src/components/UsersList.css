@@ -1,0 +1,12 @@
+
+.content{
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+input{
+    width: 100%;
+    border: none;
+    padding: 15px;
+}
