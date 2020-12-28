@@ -7,7 +7,7 @@ class ApiClient {
         this.baseUrl = schema + "://" + apiHost + ":" + port
     }
 
-    // Return auth token in format 'Token <secret>'
+    // Return auth token
     auth = (uname, pass) => {
 
         let path = '/api-token-auth/';
@@ -45,7 +45,6 @@ class ApiClient {
     }
 
     getUsers = (token) => {
-        console.log('token is ' + token)
         return fetch("http://emphasoft-test-assignment.herokuapp.com/api/v1/users/", {
             method: "GET",
             headers: {
@@ -54,26 +53,8 @@ class ApiClient {
                 "Authorization": "Token " + token
                 // "Authorization": "Token 781bd9f1de084f4daa7ba2aa8a71a2eab855354e"
             }
-        })
-            .then(res => res.json())
-            .then(console.log)
+        }).then(res => res.json())
     }
-    //
-    // // Return raw list of users
-    // users = (authToken) => {
-    //     let path = '/api/v1/users/'
-    //     return fetch(
-    //         this.baseUrl + path,
-    //         {method: "GET",
-    //             headers: {
-    //                 Accept: "application/json",
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": authToken
-    //             }
-    //         }
-    //     ).then(res => res.json()) // todo handle errors
-    //         .then(res => res.toArray());
-    // }
 
 }
 
@@ -98,7 +79,10 @@ class ApiManager {
                 return response.error;
             });
     }
-    users = (token) => this.apiClient.getUsers(token);
+    users = (token) => {
+        return this.apiClient.getUsers(token)
+            .then(res => res.sort((a, b) => a.id-b.id))
+    }
 
     // users = (sorting, filters) => {
     //     // if (auth not in session) {

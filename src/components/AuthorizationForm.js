@@ -5,7 +5,7 @@ import './AuthorizationForm.css';
 import ApiError from "../APIUsage/ApiErrors";
 
 
-class AuthorizationForm extends React.Component {
+class AuthorizationForm extends Component {
     constructor(props) {
         super(props);
         this.manager = props.manager;
@@ -115,6 +115,11 @@ class AuthorizationForm extends React.Component {
                             }
                             this.setState(new_state)
                         }
+                        // else if (!!localStorage.getItem('token')){
+                        //     console.log('redirecting...');
+                        //     return <Redirect to='/userslist'/>;
+                        // }
+
                     })
             }
         });
@@ -156,8 +161,10 @@ class AuthorizationForm extends React.Component {
                         className={`invalid-feedback ${this.state.passwordError !== '' ? 'd-block' : ''}`}>{this.state.passwordError}</div>
                 </div>
                 <button type='submit' className='btn btn-dark btn-block'>
+                    {/*{!!localStorage.getItem('token') ? <Redirect to='/userslist'/> : false}*/}
                     Войти
                 </button>
+
             </form>
         );
     }

@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Redirect, Switch, Route, BrowserRouter} from "react-router-dom";
 
 import AuthorizationForm from "./components/AuthorizationForm";
-import {ApiClient, ApiManager} from "./APIUsage/Authorization"
+import {ApiClient, ApiManager} from "./APIUsage/Authorization";
+import UsersList from "./components/UsersList";
 
 class App extends Component{
   constructor(props) {
@@ -15,7 +17,20 @@ class App extends Component{
 
   render() {
     return(
-        <AuthorizationForm manager={this.apiManager}/>
+        <BrowserRouter>
+        <Switch>
+        <Route exact path="/">
+            <AuthorizationForm manager={this.apiManager}/>
+            {/*{'token' in localStorage ? <Redirect to='/userslist'/> : <AuthorizationForm manager={this.apiManager}/>}*/}
+        </Route>
+          <Route path="/userslist">
+              <UsersList manager={this.apiManager} />
+              {/*{!!localStorage.getItem('token') ? <UsersList/> : <AuthorizationForm manager={this.apiManager}/>}*/}
+          </Route>
+        </Switch>
+        </BrowserRouter>
+
+
     )
   }
 }
