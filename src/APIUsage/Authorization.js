@@ -1,7 +1,7 @@
 import ApiError from "./ApiErrors";
 
-class ApiClient {
 
+class ApiClient {
 
     constructor(apiHost, port = 80, schema = 'http') {
         this.baseUrl = schema + "://" + apiHost + ":" + port
@@ -25,8 +25,6 @@ class ApiClient {
             body: JSON.stringify(user)
         })
             .then(response => {
-                console.log('raw resp')
-                console.log(response)
                 if (!response.ok) {
                     return {error: response.status === 400 ? ApiError.INVALID_CREDIT : ApiError.UNKNOWN_ERROR}
                 }
@@ -35,8 +33,6 @@ class ApiClient {
                     if ('token' in jsonResponse) {
                         return {token: jsonResponse['token']}
                     }
-                    console.log(jsonResponse)
-                    console.error('There is not token in result')
                     return {error: ApiError.UNKNOWN_ERROR};
 
                 });
@@ -58,7 +54,6 @@ class ApiClient {
                 // "Authorization": "Token 781bd9f1de084f4daa7ba2aa8a71a2eab855354e"
             }
         }).then(response => {
-            console.log(response.status)
             const result = {
                 users: undefined,
                 error: undefined
@@ -77,9 +72,7 @@ class ApiClient {
         }).catch(_ => {
             return {error: ApiError.UNKNOWN_ERROR}
         });
-
     }
-
 }
 
 
@@ -91,24 +84,21 @@ class ApiManager {
     auth = (uname, pass) => {
         return this.apiClient.auth(uname, pass)
             .then(response => {
-                console.log(response)
                 if ('token' in response) {
                     localStorage.setItem('token', response['token']);
-                    console.log('token set');
                     return undefined;
                 }
 
                 // comes error
-                console.log('error ', +response.error)
                 return response.error;
             });
     }
+
     users = () => {
         if ('token' in localStorage && localStorage["token"]) {
             return this.apiClient.getUsers(localStorage.getItem('token'));
         }
         return Promise.resolve({error: ApiError.NEED_AUTH});
-
     }
 }
 

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './AuthorizationForm.css';
 import ApiError from "../APIUsage/ApiErrors";
-import {Link, Router, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 
 
 class AuthorizationForm extends Component {
@@ -11,8 +11,8 @@ class AuthorizationForm extends Component {
         super(props);
         this.manager = props.manager;
         this.state = {
-            username: 'test_super',
-            password: 'Nf<U4f<rDbtDxAPn',
+            username: '',
+            password: '',
             highlightUsername: false,
             highlightPassword: false,
             usernameError: '',
@@ -22,7 +22,6 @@ class AuthorizationForm extends Component {
     }
 
     handleUsernameChange = event => {
-        console.log('handle username change')
         this.setState({username: event.target.value}, () =>
             this.validateUsername());
     };
@@ -78,17 +77,13 @@ class AuthorizationForm extends Component {
         let newstate = {
             passwordError: error,
             highlightPassword: error !== ''
-        }
-        console.log('set new state', newstate)
+        };
         this.setState(newstate);
     }
 
     isValidState = () => {
-        console.log(this.state)
         this.validateUsername();
         this.validatePassword();
-        console.log(this.state)
-        // console.log(this.state);
         return this.state.username && this.state.password && !this.state.passwordError && !this.state.usernameError;
     }
 
@@ -134,7 +129,6 @@ class AuthorizationForm extends Component {
 
     render() {
         return (
-
             <form className="container" onSubmit={this.handleSubmit}>
                 <div className='form-group'>
                     <label htmlFor='username'>Логин</label>
