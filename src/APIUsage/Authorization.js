@@ -40,12 +40,16 @@ class ApiClient {
                     return {error: ApiError.UNKNOWN_ERROR};
 
                 });
+            })
+            .catch(_ => {
+                return {error: ApiError.UNKNOWN_ERROR}
             });
 
     }
 
     getUsers = (token) => {
-        return fetch("http://emphasoft-test-assignment.herokuapp.com/api/v1/users/", {
+        let path = '/api/v1/users/';
+        return fetch(this.baseUrl + path, {
             method: "GET",
             headers: {
                 Accept: "application/json",
@@ -70,8 +74,10 @@ class ApiClient {
                 result.users = users;
                 return result;
             });
-        })
-        // .then(response => response.json())
+        }).catch(_ => {
+            return {error: ApiError.UNKNOWN_ERROR}
+        });
+
     }
 
 }
@@ -98,19 +104,12 @@ class ApiManager {
             });
     }
     users = () => {
-        return this.apiClient.getUsers(localStorage.getItem('token'))
-    }
+        if ('token' in localStorage && localStorage["token"]) {
+            return this.apiClient.getUsers(localStorage.getItem('token'));
+        }
+        return Promise.resolve({error: ApiError.NEED_AUTH});
 
-    // users = (sorting, filters) => {
-    //     // if (auth not in session) {
-    //     //     error;
-    //     // }
-    //
-    //     users = this.apiClient.users(session[token])
-    //
-    //     users = filter(filters, users)
-    //     return sort(sorting, users);
-    // }
+    }
 }
 
 export {ApiClient, ApiManager};

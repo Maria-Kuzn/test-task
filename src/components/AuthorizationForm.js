@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './AuthorizationForm.css';
 import ApiError from "../APIUsage/ApiErrors";
+import {Link, Router, Redirect} from 'react-router-dom';
 
 
 class AuthorizationForm extends Component {
@@ -15,7 +16,8 @@ class AuthorizationForm extends Component {
             highlightUsername: false,
             highlightPassword: false,
             usernameError: '',
-            passwordError: ''
+            passwordError: '',
+            redirect: this.hasAuthToken()
         };
     }
 
@@ -90,6 +92,10 @@ class AuthorizationForm extends Component {
         return this.state.username && this.state.password && !this.state.passwordError && !this.state.usernameError;
     }
 
+    hasAuthToken = () => {
+        return localStorage.getItem('token');
+    }
+
     handleSubmit = event => {
         event.preventDefault();
 
@@ -105,20 +111,18 @@ class AuthorizationForm extends Component {
                             }
                             switch (error) {
                                 case ApiError.INVALID_CREDIT:
-                                    new_state.passwordError = 'Invalid login or password';
+                                    new_state.passwordError = 'Неверный логин или пароль';
                                     new_state.highlightPassword = true;
                                     new_state.highlightUsername = true;
                                     break;
                                 default:
-                                    new_state.passwordError = 'Server error. Please try again later.';
+                                    new_state.passwordError = 'Ошибка сервера. Пожалуйста, повторите позже';
                                     break
                             }
-                            this.setState(new_state)
+                            this.setState(new_state);
+                        } else {
+                            this.setState({redirect: true})
                         }
-                        // else if (!!localStorage.getItem('token')){
-                        //     console.log('redirecting...');
-                        //     return <Redirect to='/userslist'/>;
-                        // }
 
                     })
             }
@@ -161,10 +165,12 @@ class AuthorizationForm extends Component {
                         className={`invalid-feedback ${this.state.passwordError !== '' ? 'd-block' : ''}`}>{this.state.passwordError}</div>
                 </div>
                 <button type='submit' className='btn btn-dark btn-block'>
-                    {/*{!!localStorage.getItem('token') ? <Redirect to='/userslist'/> : false}*/}
                     Войти
                 </button>
-
+                {
+                    this.state.redirect &&
+                    <Redirect to='/userslist'/>
+                }
             </form>
         );
     }
